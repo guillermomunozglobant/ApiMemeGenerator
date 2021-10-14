@@ -7,18 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Models;
+using ApiMemeGenerator.Auth;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiMemeGenerator.Controllers
 {
+
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ImagenesController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public ImagenesController(AppDBContext context)
+        private readonly IJwtAuthenticationService _authService;
+
+        public ImagenesController(AppDBContext context,
+            IJwtAuthenticationService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         // GET: api/Imagenes
