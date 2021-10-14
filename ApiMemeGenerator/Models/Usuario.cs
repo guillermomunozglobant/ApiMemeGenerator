@@ -1,4 +1,6 @@
-﻿namespace ApiMemeGenerator.Models
+﻿using ApiMemeGenerator.Enum;
+
+namespace ApiMemeGenerator.Models
 {
     public class Usuario
     {
