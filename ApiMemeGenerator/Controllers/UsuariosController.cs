@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiMemeGenerator.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuariosController : ControllerBase

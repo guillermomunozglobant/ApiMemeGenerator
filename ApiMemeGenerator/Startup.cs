@@ -1,3 +1,4 @@
+using ApiMemeGenerator.Auth;
 using ApiMemeGenerator.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,8 @@ namespace ApiMemeGenerator
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
             services.AddDbContext<AppDBContext>(options =>
              options.UseSqlite("Data Source=Database.db"));
             services.AddControllers();
@@ -37,6 +40,10 @@ namespace ApiMemeGenerator
         private void Authentication(IServiceCollection services)
         {
             var key = "This is the demo key";
+            
+            services.AddSingleton<IJwtAuthenticationService>
+                (new JwtAuthenticationService(key));
+
             services
                 .AddAuthentication(x =>
                 {
@@ -71,6 +78,8 @@ namespace ApiMemeGenerator
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
