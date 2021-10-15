@@ -2,6 +2,7 @@
 using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Entities;
 using ApiMemeGenerator.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 
 namespace ApiMemeGenerator.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MemeGeneratorController : ControllerBase
