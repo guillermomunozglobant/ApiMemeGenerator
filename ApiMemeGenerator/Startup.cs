@@ -1,12 +1,15 @@
 using ApiMemeGenerator.Context;
+using ApiMemeGenerator.ExceptionFilter;
 using ApiMemeGenerator.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Net.Mime;
 
 namespace ApiMemeGenerator
 {
@@ -26,7 +29,24 @@ namespace ApiMemeGenerator
 
             services.AddDbContext<AppDBContext>(options =>
              options.UseSqlite("Data Source=Database.db"));
-            services.AddControllers();
+            services.AddControllers(options => options.Filters.Add(new HttpResponseExceptionFilter())).ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var result = new BadRequestObjectResult(context.ModelState);
+                    
+                    result.ContentTypes.Add(MediaTypeNames.Application.Json);
+                    result.ContentTypes.Add(MediaTypeNames.Application.Xml);
+
+                    return result;
+                };
+                options.SuppressConsumesConstraintForFormFileParameters = true;
+                options.SuppressInferBindingSourcesForParameters = true;
+                options.SuppressModelStateInvalidFilter = true;
+                options.SuppressMapClientErrors = true;
+                options.ClientErrorMapping[Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound].Link =
+                    "https://httpstatuses.com/404";
+            });
             services.Authentication();
             services.AddSwaggerGen(c =>
             {
@@ -39,9 +59,14 @@ namespace ApiMemeGenerator
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/error-local-development");
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiMemeGenerator v1"));
+            }
+            else
+            {
+                app.UseExceptionHandler("/error");
             }
 
             app.UseHttpsRedirection();

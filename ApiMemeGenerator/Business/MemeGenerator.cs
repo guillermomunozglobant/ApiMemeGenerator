@@ -1,6 +1,7 @@
 ﻿using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Entities;
 using ApiMemeGenerator.Enum;
+using ApiMemeGenerator.ExceptionFilter;
 using ApiMemeGenerator.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,12 +24,12 @@ namespace ApiMemeGenerator.Business
         public Meme GenerarMeme(int idImagen, Dictionary<UbicacionTexto, string> textos)
         {
             if (textos.Count == 0)
-                throw new ArgumentException("No pasaste textos");
+                throw new HttpResponseException("No pasaste textos");
 
             var imagen = appDBContext.Imagen.Find(idImagen);
 
             if (imagen == null)
-                throw new Exception("La imagen no fue encontrada");
+                throw new HttpResponseException("La imagen no fue encontrada");
 
 
             EscribirTexto(imagen, textos);
