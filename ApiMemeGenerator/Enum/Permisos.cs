@@ -2,6 +2,8 @@
 {
     public enum Permisos
     {
-        Admin = 0, Creador = 1, Vista = 2
+        Admin, 
+        Creador,
+        Vista
     }
 }

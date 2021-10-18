@@ -2,6 +2,10 @@
 {
     public enum UbicacionTexto
     {
-        Arriba = 0, TresCuarto = 1, Medio = 2, UnTercio= 3, Abajo = 4
+        Arriba,
+        TresCuarto,
+        Medio, 
+        UnTercio,
+        Abajo
     }
 }
