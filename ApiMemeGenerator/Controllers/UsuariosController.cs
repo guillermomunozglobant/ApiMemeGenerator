@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Models;
 using Microsoft.AspNetCore.Authorization;
+using ApiMemeGenerator.Business;
 
 namespace ApiMemeGenerator.Controllers
 {
@@ -16,61 +17,34 @@ namespace ApiMemeGenerator.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly IService _service;
 
-        public UsuariosController(AppDBContext context)
+        public UsuariosController(IService service)
         {
-            _context = context;
+            _service = service;
         }
+
 
         // GET: api/Usuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuario()
+        public async Task<IEnumerable<Usuario>> GetUsuario()
         {
-            return await _context.Usuario.ToListAsync();
+            return await _service.GetUsuarios();
         }
 
         // GET: api/Usuarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        public async Task<Usuario> GetUsuario(int id)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return usuario;
+            return await _service.GetUsuarios(id);
         }
 
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
+        public async Task<IActionResult> PutUsuario(int id, Usuario Usuario)
         {
-            if (id != usuario.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(usuario).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UsuarioExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _service.UpdateUsuario(id, Usuario);
 
             return NoContent();
         }
@@ -78,33 +52,21 @@ namespace ApiMemeGenerator.Controllers
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+        public ActionResult<Usuario> PostUsuario(Usuario Usuario)
         {
-            _context.Usuario.Add(usuario);
-            await _context.SaveChangesAsync();
+            _service.GenerateUsuario(Usuario);
 
-            return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
+            return CreatedAtAction("GetUsuario", new { id = Usuario.Id }, Usuario);
         }
 
         // DELETE: api/Usuarios/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            _context.Usuario.Remove(usuario);
-            await _context.SaveChangesAsync();
-
+            await _service.DeleteUsuario(id);
             return NoContent();
         }
 
-        private bool UsuarioExists(int id)
-        {
-            return _context.Usuario.Any(e => e.Id == id);
-        }
+       
     }
 }

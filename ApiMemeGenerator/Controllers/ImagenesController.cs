@@ -9,6 +9,7 @@ using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Models;
 using ApiMemeGenerator.Auth;
 using Microsoft.AspNetCore.Authorization;
+using ApiMemeGenerator.Business;
 
 namespace ApiMemeGenerator.Controllers
 {
@@ -18,36 +19,25 @@ namespace ApiMemeGenerator.Controllers
     [ApiController]
     public class ImagenesController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly IService _service;
 
-        private readonly IJwtAuthenticationService _authService;
-
-        public ImagenesController(AppDBContext context,
-            IJwtAuthenticationService authService)
+        public ImagenesController(IService service)
         {
-            _context = context;
-            _authService = authService;
+            _service = service;
         }
 
         // GET: api/Imagenes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Imagen>>> GetImagen()
+        public async Task<IEnumerable<Imagen>> GetImagen()
         {
-            return await _context.Imagen.ToListAsync();
+            return await _service.GetImagenes();
         }
 
         // GET: api/Imagenes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Imagen>> GetImagen(int id)
+        public async Task<Imagen> GetImagen(int id)
         {
-            var imagen = await _context.Imagen.FindAsync(id);
-
-            if (imagen == null)
-            {
-                return NotFound();
-            }
-
-            return imagen;
+            return await _service.GetImagenes(id);
         }
 
         // PUT: api/Imagenes/5
@@ -55,28 +45,7 @@ namespace ApiMemeGenerator.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutImagen(int id, Imagen imagen)
         {
-            if (id != imagen.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(imagen).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ImagenExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _service.UpdateImagen(id, imagen);
 
             return NoContent();
         }
@@ -86,8 +55,7 @@ namespace ApiMemeGenerator.Controllers
         [HttpPost]
         public async Task<ActionResult<Imagen>> PostImagen(Imagen imagen)
         {
-            _context.Imagen.Add(imagen);
-            await _context.SaveChangesAsync();
+            _service.GenerateImagen(imagen);
 
             return CreatedAtAction("GetImagen", new { id = imagen.Id }, imagen);
         }
@@ -96,21 +64,9 @@ namespace ApiMemeGenerator.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteImagen(int id)
         {
-            var imagen = await _context.Imagen.FindAsync(id);
-            if (imagen == null)
-            {
-                return NotFound();
-            }
-
-            _context.Imagen.Remove(imagen);
-            await _context.SaveChangesAsync();
-
+            await _service.DeleteImagen(id);
             return NoContent();
         }
 
-        private bool ImagenExists(int id)
-        {
-            return _context.Imagen.Any(e => e.Id == id);
-        }
     }
 }
