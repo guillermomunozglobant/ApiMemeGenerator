@@ -1,3 +1,4 @@
+using ApiMemeGenerator.Business;
 using ApiMemeGenerator.Context;
 using ApiMemeGenerator.ExceptionFilter;
 using ApiMemeGenerator.Extension;
@@ -49,6 +50,7 @@ namespace ApiMemeGenerator
                     "https://httpstatuses.com/404";
             });
             services.Authentication();
+            services.AddScoped<IService,Service>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiMemeGenerator", Version = "v1" });
