@@ -25,10 +25,11 @@ namespace ApiMemeGenerator
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connection = @"Server=db;Database=master;User=sa;Password=Your_password123;";
 
 
             services.AddDbContext<AppDBContext>(options =>
-             options.UseSqlite("Data Source=Database.db"));
+             options.UseSqlServer(connection));
             services.AddControllers(options => options.Filters.Add(new HttpResponseExceptionFilter())).ConfigureApiBehaviorOptions(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>

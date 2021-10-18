@@ -5,6 +5,9 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+COPY ["ApiMemeGenerator/entrypoint.sh", "/app"]
+RUN chmod 755 /app/entrypoint.sh
+
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["ApiMemeGenerator/ApiMemeGenerator.csproj", "ApiMemeGenerator/"]
