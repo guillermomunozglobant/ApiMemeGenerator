@@ -49,22 +49,14 @@ namespace ApiMemeGenerator.Business
             foreach (var texto in textos)
             {
 
-                float height = 0f;
-                switch (texto.Key)
+                float height = texto.Key switch
                 {
-                    case UbicacionTexto.Arriba:
-                        height = bitmap.Height / 4;
-                        break;
-                    case UbicacionTexto.Medio:
-                        height = bitmap.Height / 2;
-                        break;
-                    case UbicacionTexto.UnTercio:
-                        height = bitmap.Height / 3;
-                        break;
-                    case UbicacionTexto.TresCuarto:
-                        height = (bitmap.Height / 4) * 3;
-                        break;
-                }
+                    UbicacionTexto.Arriba => bitmap.Height / 4,
+                    UbicacionTexto.Medio => bitmap.Height / 2,
+                    UbicacionTexto.UnTercio => bitmap.Height / 3,
+                    UbicacionTexto.TresCuarto => (bitmap.Height / 4) * 3,
+                    _ => 0f
+                };
 
                 PointF firstLocation = new(bitmap.Width / 3, height);
 
