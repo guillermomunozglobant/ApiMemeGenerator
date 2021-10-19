@@ -2,6 +2,7 @@
 using ApiMemeGenerator.Context;
 using ApiMemeGenerator.Entities;
 using ApiMemeGenerator.Enum;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -17,11 +18,14 @@ namespace ApiMemeGenerator.Controllers
     {
         private readonly AppDBContext _context;
         private readonly IMemeGenerator _memeGenerator;
+        private readonly IMapper _mapper;
 
-        public MemeGeneratorController(AppDBContext context, IMemeGenerator memeGenerator)
+        public MemeGeneratorController(AppDBContext context, 
+            IMemeGenerator memeGenerator, IMapper mapper)
         {
             _context = context;
             _memeGenerator = memeGenerator;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -31,7 +35,7 @@ namespace ApiMemeGenerator.Controllers
             {
                 throw new System.Exception("No pasaste datos");
             }
-            return _memeGenerator.GenerarMeme(idImagen,textos);
+            return _mapper.Map<Meme>(_memeGenerator.GenerarMeme(idImagen,textos));
         }
     }
 }
