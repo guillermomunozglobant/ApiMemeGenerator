@@ -21,7 +21,7 @@ namespace ApiMemeGenerator.Business
             appDBContext = dbContext;
         }
 
-        public Meme GenerarMeme(int idImagen, Dictionary<UbicacionTexto, string> textos)
+        public Imagen GenerarMeme(int idImagen, Dictionary<UbicacionTexto, string> textos)
         {
             if (textos.Count == 0)
                 throw new HttpResponseException("No pasaste textos");
@@ -34,11 +34,7 @@ namespace ApiMemeGenerator.Business
 
             EscribirTexto(imagen, textos);
 
-            return new Meme()
-            {
-                Notificacion = "El meme se ha creado con exito"
-            ,
-            };
+            return imagen;
         }
 
         private void EscribirTexto(Imagen imagen,
